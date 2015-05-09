@@ -7,6 +7,7 @@
 
 #include "../../Common/Common.hpp"
 #include <vector>
+#include <functional>
 
 namespace tree {
 
@@ -38,6 +39,8 @@ namespace tree {
 		virtual bool remove(int value)=0;
 
 		virtual bool search(int value, collection& history)=0;
+
+		virtual void each(std::function<void(int)> handle, char order) =0;
 
 		virtual int height()=0;
 

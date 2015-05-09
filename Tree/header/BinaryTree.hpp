@@ -2,7 +2,6 @@
 #define _TREE_BINARY
 
 #include "TreeInterface.hpp"
-#include <functional>
 
 namespace tree{
 
