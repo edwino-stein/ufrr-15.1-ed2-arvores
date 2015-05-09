@@ -15,6 +15,8 @@ namespace tree{
 		std::vector<int> keys;
 		std::vector<BTreePage *> branches;
 
+		~BTreePage();
+
 		void insertKey(int value, unsigned int index, bool before = true);
 
 		void addKey(int value);
@@ -50,6 +52,8 @@ namespace tree{
 
 		bool isLeaf();
 
+
+		void clear();
 
 		unsigned int countKeys();
 

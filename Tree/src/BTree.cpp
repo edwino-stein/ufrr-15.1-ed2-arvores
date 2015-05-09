@@ -22,8 +22,12 @@ BTree::BTree(unsigned int order, int value): BTree(order){
 }
 
 BTree::~BTree(){
+
 	//Remove todos os filhos
 	this->clear();
+
+	//Libera raiz
+	delete this->root;
 }
 
 /* ******************* OPERAÇÕES ******************* */
@@ -220,6 +224,8 @@ bool BTree::isEmpty(){
 
 /* Limpador */
 void BTree::clear(){
+
+	this->root->clear();
 	return;
 }
 
@@ -383,6 +389,12 @@ void BTree::redistribute(unsigned int index, BTreePage *page){
 /* ******************************************************************* */
 /* ********************** Implementação BTreePage ******************** */
 /* ******************************************************************* */
+
+/* ******************* CONSTRUTORES E DESTRUTORES ******************* */
+
+BTreePage::~BTreePage(){
+	this->clear();
+}
 
 /* ******************* OPERAÇÕES ******************* */
 
@@ -608,6 +620,27 @@ bool BTreePage::isLeaf(){
 }
 
 /* ******************* OUTROS ******************* */
+	
+void BTreePage::clear(){
+
+	if(this->isEmpty())
+		return;
+
+	//Limpa lista de chaves
+	this->keys.clear();
+
+	//Limpa lista de galhos
+	while(!this->branches.empty()){
+
+		//Caso haja referência, libera a memória
+		if(this->branches[0] != NULL){
+			this->branches[0]->clear();
+			delete this->branches[0];
+		}
+
+		this->branches.erase(this->branches.begin());
+	}
+}
 
 /* Conta as chaves */
 unsigned int BTreePage::countKeys(){
@@ -676,7 +709,7 @@ void BTreePage::split(unsigned int pivot){
 /* Impre lista de chaves */
 void BTreePage::printList(){
 
-	//Formato: (<key[0]>, <key[1]>, ...,<key[n]>)
+	//Formato: (<key[0]>, <key[1]>, ...,<key[n - 1]>)
 
 	out->put("(");
 
