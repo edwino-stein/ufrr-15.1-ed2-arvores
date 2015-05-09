@@ -9,7 +9,7 @@ namespace tree{
 	/*
 		CHECKLIST:
 		* Inserção [X]
-		* Remoção [ ]
+		* Remoção [X]
 		* Busca	[ ]
 		* Percurso [ ]
 		* Impressão [X]
@@ -82,7 +82,149 @@ namespace tree{
 		}
 
 		bool remove(int value){
-			return false;
+
+			bool result = this->remove(value, this->root);
+
+			if(result && this->root->countBranches() == 1){
+				BTreePage *oldRoot = this->root;
+				this->root = oldRoot->getBranche(0);
+				oldRoot->setBranche(0, NULL);
+				delete oldRoot;
+			}
+
+			return result;
+		}
+
+		bool remove(int value, BTreePage *page){
+
+			unsigned int index = page->getIndex(value);
+			bool result = false;
+
+			if(page->hasKey(value)){
+
+				if(page->isLeaf()){
+					page->removeKey(index);
+					return true;
+				}
+
+				else{
+					int sucessor = this->getSucessor(value, page);
+					page->setKey(index, sucessor);
+					result = this->remove(sucessor, page->getBranche(++index));
+				}
+			}
+			else if(!page->isLeaf()) result = this->remove(value, page->getBranche(index));
+			else return false;
+
+			if(result) this->redistribute(index, page);
+			return result;
+		}
+
+		void redistribute(unsigned int index, BTreePage *page){
+
+			BTreePage *child = page->getBranche(index);
+			if(child->countKeys() >= this->order)
+				return;
+
+			BTreePage *left = index > 0 ? page->getBranche(index - 1) : NULL;
+			BTreePage *right = index < page->countBranches() - 1 ? page->getBranche(index + 1) : NULL;
+
+			if((left != NULL) && (left->countKeys() > this->order) && (left->isLeaf())){
+
+				child->addKey(page->getKey(index - 1));
+				page->removeKey(index - 1);
+				page->addKey(left->getKey(left->countKeys() - 1));
+				left->removeKey(left->countKeys() - 1);
+			}
+
+			else if((right != NULL) && (right->countKeys() > this->order) && (right->isLeaf())){
+
+				child->addKey(page->getKey(index));
+				page->removeKey(index);
+				page->addKey(right->getKey(0));
+				right->removeKey(0);
+			}
+
+			else if((left != NULL) && (left->countKeys() == this->order)){
+
+				child->addKey(page->getKey(index - 1));
+				page->removeKey(index - 1);
+				page->removeBranche(index - 1, false);
+
+				unsigned int i;
+				unsigned int totalKeys = left->countKeys();
+				for(i = 0; i < totalKeys; i++){
+					child->addKey(left->getKey(i));
+
+					if(!child->isLeaf()){
+						child->insertBranche(i, left->getBranche(i));
+						left->setBranche(i, NULL);
+					}
+				}
+
+				if(!child->isLeaf()){
+					child->insertBranche(i, left->getBranche(i));
+					left->setBranche(i, NULL);
+				}
+
+				delete left;
+			}
+
+			else if((right != NULL) && (right->countKeys() == this->order)){
+
+				child->addKey(page->getKey(index));
+				page->removeKey(index);
+				page->removeBranche(index + 1, false);
+
+				unsigned int i;
+				unsigned int totalKeys = right->countKeys();
+				for(i = 0; i < totalKeys; i++){
+					child->addKey(right->getKey(i));
+
+					if(!child->isLeaf()){
+						child->insertBranche(totalKeys + i, right->getBranche(i), false);
+						right->setBranche(i, NULL);
+					}
+				}
+
+				if(!child->isLeaf()){
+					child->insertBranche(totalKeys + i, right->getBranche(i), false);
+					right->setBranche(i, NULL);
+				}
+
+			 	delete right;
+			}
+
+			else{
+
+				if(left != NULL){
+
+					child->addKey(page->getKey(index - 1));
+					page->removeKey(index - 1);
+					page->addKey(left->getKey(left->countKeys() - 1));
+					left->removeKey(left->countKeys() - 1);
+
+					if(!left->isLeaf()){
+						child->insertBranche(0, left->getBranche(left->countBranches() - 1));
+						left->removeBranche(left->countBranches() - 1, false);
+					}
+				}
+
+				else{
+
+					child->addKey(page->getKey(index));
+					page->removeKey(index);
+					page->addKey(right->getKey(0));
+					right->removeKey(0);
+
+					if(!right->isLeaf()){
+						right->insertBranche(0, right->getBranche(0));
+						right->removeBranche(0, false);
+					}
+				}
+
+			}
+
 		}
 
 		bool search(int value, collection& history){
@@ -100,6 +242,22 @@ namespace tree{
 		void print(){
 			out->put("R:");
 			BTreePage::printPage(this->root, 0);
+		}
+
+		int getSucessor(int value, BTreePage *page){
+
+			if(page == NULL || page->isEmpty())
+				return 0;
+
+			unsigned int index = page->getIndex(value);
+			if(page->isLeaf())
+				return page->getKey(index);
+
+			page = page->getBranche(index + 1);
+			while(!page->isLeaf())
+				page = page->getBranche(0);
+
+			return page->getKey(0);
 		}
 	};
 }

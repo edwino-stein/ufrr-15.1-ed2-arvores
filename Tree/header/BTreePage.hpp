@@ -51,7 +51,10 @@ namespace tree{
 			if(this->keys.empty())
 				return false;
 
-			this->keys.erase(this->keys.begin() + index);
+			if(index >= this->countKeys())
+				this->keys.pop_back();
+			else
+				this->keys.erase(this->keys.begin() + index);
 
 			return true;
 		}
@@ -111,6 +114,22 @@ namespace tree{
 				page
 			);
 
+		}
+
+		bool removeBranche(unsigned int index, bool autoFree = true){
+
+			if(this->isLeaf())
+				return false;
+
+			if(autoFree && this->getBranche(index) != NULL)
+				delete this->getBranche(index);
+
+			if(index >= this->countBranches())
+				this->branches.pop_back();
+			else
+				this->branches.erase(this->branches.begin() + index);
+
+			return true;
 		}
 
 		void split(unsigned int pivot){
@@ -186,9 +205,6 @@ namespace tree{
 		}
 
 		static void printPage(BTreePage *page, int spaces){
-
-			if(page->isEmpty())
-				return;
 
 			page->printList();
 			out->putNewLine();
