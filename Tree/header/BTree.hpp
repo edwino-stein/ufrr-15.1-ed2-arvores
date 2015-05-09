@@ -11,7 +11,7 @@ namespace tree{
 		* Inserção [X]
 		* Remoção [X]
 		* Busca	[X]
-		* Percurso [ ]
+		* Percurso [X]
 		* Impressão [X]
 	*/
 
@@ -250,6 +250,27 @@ namespace tree{
 				return this->search(value, history, page->getBranche(index));
 
 			return false;
+		}
+
+		void each(std::function<void(int)> handle,  char order = tree::RED_ORDER){
+
+			if(this->isEmpty())
+				return;
+
+			switch(order){
+
+				case tree::ERD_ORDER:
+					this->root->eachInOrder(handle);
+				break;
+
+				case tree::EDR_ORDER:
+					this->root->eachPostOrder(handle);
+				break;
+
+				case tree::RED_ORDER:
+				default:
+					this->root->eachPreOrder(handle);
+			}
 		}
 
 		int height(){

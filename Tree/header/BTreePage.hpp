@@ -188,6 +188,62 @@ namespace tree{
 			return this->branches.empty();
 		}
 
+		void eachPreOrder(std::function<void(int)> handle){
+
+			if(this->isEmpty())
+				return;
+
+			unsigned int i;
+			unsigned int totalKeys = this->countKeys();
+			for(i = 0; i < totalKeys; i++){
+				
+				handle(this->getKey(i));
+				if(!this->isLeaf())
+					this->getBranche(i)->eachPreOrder(handle);
+			}
+
+			if(!this->isLeaf())
+				this->getBranche(i)->eachPreOrder(handle);
+		}
+
+		void eachInOrder(std::function<void(int)> handle){
+
+			if(this->isEmpty())
+				return;
+
+			unsigned int i;
+			unsigned int totalKeys = this->countKeys();
+			for(i = 0; i < totalKeys; i++){
+
+				if(!this->isLeaf())
+					this->getBranche(i)->eachInOrder(handle);
+				
+				handle(this->getKey(i));
+			}
+
+			if(!this->isLeaf())
+				this->getBranche(i)->eachInOrder(handle);
+		}
+
+		void eachPostOrder(std::function<void(int)> handle){
+
+			if(this->isEmpty())
+				return;
+
+			if(!this->isLeaf())
+				this->getBranche(0)->eachPostOrder(handle);
+
+			unsigned int i;
+			unsigned int totalKeys = this->countKeys();
+			for(i = 1; i < totalKeys + 1; i++){
+
+				if(!this->isLeaf())
+					this->getBranche(i)->eachPostOrder(handle);
+
+				handle(this->getKey(i - 1));
+			}
+		}
+
 		void printList(){
 
 			out->put("(");
