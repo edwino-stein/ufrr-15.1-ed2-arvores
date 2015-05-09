@@ -10,7 +10,7 @@ namespace tree{
 		CHECKLIST:
 		* Inserção [X]
 		* Remoção [X]
-		* Busca	[ ]
+		* Busca	[X]
 		* Percurso [ ]
 		* Impressão [X]
 	*/
@@ -27,6 +27,10 @@ namespace tree{
 
 		BTree(unsigned int order) : order(order), maxKeys(2 * order), maxBranches(2 * order + 1){
 			this->root = new BTreePage();
+		}
+
+		BTree(unsigned int order, int value): BTree(order){
+			this->insert(value);
 		}
 
 		~BTree(){
@@ -228,15 +232,41 @@ namespace tree{
 		}
 
 		bool search(int value, collection& history){
+			return this->search(value, history, this->root);
+		}
+
+		bool search(int value, collection& history, BTreePage *page){
+
+			if(page->isEmpty())
+				return false;
+
+			unsigned int index = page->getIndex(value);
+			history.push_back(page->getKey(index));
+
+			if(value == page->getKey(index))
+				return true;
+
+			if(!page->isLeaf())
+				return this->search(value, history, page->getBranche(index));
+
 			return false;
 		}
 
 		int height(){
-			return 0;
+
+			BTreePage *page = this->root;
+			int height = page->isEmpty() ? (-1) : 0;
+
+			while(!page->isLeaf()){
+				height++;
+				page = page->getBranche(0);
+			}
+
+			return height;
 		}
 
 		bool isEmpty(){
-			return true;
+			return this->root->isEmpty();
 		}
 
 		void print(){
