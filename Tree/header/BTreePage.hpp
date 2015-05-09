@@ -7,275 +7,60 @@
 namespace tree{
 
 	class BTreePage : public Object{
+
 		friend class BTree;
+
+	protected:
 
 		std::vector<int> keys;
 		std::vector<BTreePage *> branches;
 
-		unsigned int getIndex(int valor){
+		void insertKey(int value, unsigned int index, bool before = true);
 
-			unsigned int i;
+		void addKey(int value);
 
-			for (i = 0; i < this->countKeys(); ++i)
-				if(valor <= this->getKey(i)) break;
+		bool removeKey(unsigned int index);
 
-			return i;
-		}
+		void insertBranche(unsigned int index, BTreePage *page, bool before = true);
 
-		void insertKey(int value, unsigned int index, bool before = true){
+		bool removeBranche(unsigned int index, bool autoFree = true);
 
-			if((index >= this->countKeys() && !before) || this->isEmpty()){
-				this->keys.push_back(value);
-				return;
-			}
+		void eachPreOrder(std::function<void(int)> handle);
 
-			this->keys.insert(
-				this->keys.begin() + index + (before ? 0 : 1),
-				value
-			);
-		}
+		void eachInOrder(std::function<void(int)> handle);
 
-		void addKey(int value){
+		void eachPostOrder(std::function<void(int)> handle);
 
-			if(this->isEmpty()){
-				this->keys.push_back(value);
-				return;
-			}
 
-			unsigned int index = this->getIndex(value);
-			this->insertKey(value, index, value <= this->getKey(index));
-		}
+		unsigned int getIndex(int valor);
 
-		bool removeKey(unsigned int index){
+		int getKey(unsigned int index);
 
-			if(this->keys.empty())
-				return false;
+		BTreePage *getBranche(unsigned int index);
 
-			if(index >= this->countKeys())
-				this->keys.pop_back();
-			else
-				this->keys.erase(this->keys.begin() + index);
 
-			return true;
-		}
+		void setKey(unsigned int index, int value);
 
-		int getKey(unsigned int index){
+		void setBranche(unsigned int index, BTreePage *page);
 
-			if(this->isEmpty())
-				return 0;
 
-			if(index >= this->countKeys())
-				return this->keys[this->countKeys() - 1];
+		bool hasKey(int value);
 
-			return this->keys[index];
-		}
+		bool isEmpty();
 
-		void setKey(unsigned int index, int value){
+		bool isLeaf();
 
-			if(this->isEmpty())
-				return;
 
-			if(index >= this->countKeys())
-				index = this->countKeys() - 1;
+		unsigned int countKeys();
 
-			this->keys[index] = value;
-		}
+		unsigned int countBranches();
+		
+		void split(unsigned int pivot);
 
-		bool hasKey(int value){
-			unsigned int index = this->getIndex(value);
-			return value == this->getKey(index);
-		}
+		void printList();
 
-		BTreePage *getBranche(unsigned int index){
+		static void printPage(BTreePage *page, int spaces);
 
-			if(index >= this->countBranches())
-				return this->branches[this->countBranches() - 1];
-
-			return this->branches[index];
-		}
-
-		void setBranche(unsigned int index, BTreePage *page){
-
-			if(index >= this->countBranches())
-				return;
-
-			this->branches[index] = page;
-		}
-
-		void insertBranche(unsigned int index, BTreePage *page, bool before = true){
-
-			if((index >= this->countBranches() && !before) || this->isLeaf()){
-				this->branches.push_back(page);
-				return;
-			}
-
-			this->branches.insert(
-				this->branches.begin() + index + (before ? 0 : 1),
-				page
-			);
-
-		}
-
-		bool removeBranche(unsigned int index, bool autoFree = true){
-
-			if(this->isLeaf())
-				return false;
-
-			if(autoFree && this->getBranche(index) != NULL)
-				delete this->getBranche(index);
-
-			if(index >= this->countBranches())
-				this->branches.pop_back();
-			else
-				this->branches.erase(this->branches.begin() + index);
-
-			return true;
-		}
-
-		void split(unsigned int pivot){
-
-			if(this->isEmpty())
-				return;
-
-			int pivotValue = this->getKey(pivot);
-			BTreePage *left = new BTreePage();
-			BTreePage *right = new BTreePage();
-
-			unsigned int i = 0;
-			while(this->countKeys() > 1){
-
-				if(pivotValue == this->getKey(i)) i++;
-
-				if(this->getKey(i) < pivotValue)
-					left->addKey(this->getKey(i));
-				else
-					right->addKey(this->getKey(i));
-
-				this->removeKey(i);
-			}
-
-			if(!this->isLeaf()){
-
-				for(i = 0; i < this->countBranches(); i++){
-
-					if(i <= pivot)
-						left->insertBranche(i, this->getBranche(i), false);
-					else
-						right->insertBranche(i, this->getBranche(i), false);
-
-					this->setBranche(i, NULL);
-				}
-			}
-
-			this->branches.clear();
-			this->insertBranche(0, left, true);
-			this->insertBranche(0, right, false);
-		}
-
-		unsigned int countKeys(){
-			return this->keys.size();
-		}
-
-		unsigned int countBranches(){
-			return this->branches.size();
-		}
-
-		bool isEmpty(){
-			return this->keys.empty();
-		}
-
-		bool isLeaf(){
-			return this->branches.empty();
-		}
-
-		void eachPreOrder(std::function<void(int)> handle){
-
-			if(this->isEmpty())
-				return;
-
-			unsigned int i;
-			unsigned int totalKeys = this->countKeys();
-			for(i = 0; i < totalKeys; i++){
-				
-				handle(this->getKey(i));
-				if(!this->isLeaf())
-					this->getBranche(i)->eachPreOrder(handle);
-			}
-
-			if(!this->isLeaf())
-				this->getBranche(i)->eachPreOrder(handle);
-		}
-
-		void eachInOrder(std::function<void(int)> handle){
-
-			if(this->isEmpty())
-				return;
-
-			unsigned int i;
-			unsigned int totalKeys = this->countKeys();
-			for(i = 0; i < totalKeys; i++){
-
-				if(!this->isLeaf())
-					this->getBranche(i)->eachInOrder(handle);
-				
-				handle(this->getKey(i));
-			}
-
-			if(!this->isLeaf())
-				this->getBranche(i)->eachInOrder(handle);
-		}
-
-		void eachPostOrder(std::function<void(int)> handle){
-
-			if(this->isEmpty())
-				return;
-
-			if(!this->isLeaf())
-				this->getBranche(0)->eachPostOrder(handle);
-
-			unsigned int i;
-			unsigned int totalKeys = this->countKeys();
-			for(i = 1; i < totalKeys + 1; i++){
-
-				if(!this->isLeaf())
-					this->getBranche(i)->eachPostOrder(handle);
-
-				handle(this->getKey(i - 1));
-			}
-		}
-
-		void printList(){
-
-			out->put("(");
-
-			unsigned int totalKeys = this->countKeys();
-
-			for(unsigned int i = 0; i < totalKeys; i++){
-
-				out->put(this->getKey(i));
-
-				if(i < totalKeys - 1) out->put(", ");
-			}
-
-			out->put(")");
-		}
-
-		static void printPage(BTreePage *page, int spaces){
-
-			page->printList();
-			out->putNewLine();
-
-			if(page->isLeaf())
-				return;
-
-			unsigned int totalKeys = page->countBranches();
-
-			for (unsigned int i = 0; i < totalKeys; i++){
-				Tree::printSpaces(spaces+1);
-				out->put(i)->put(':');
-				BTreePage::printPage(page->getBranche(i), spaces+1);
-			}
-		}
 	};
 }
 
