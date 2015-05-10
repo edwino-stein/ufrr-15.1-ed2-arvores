@@ -5,6 +5,9 @@
 #if !defined  _COMMON_APPLICATION
 #define _COMMON_APPLICATION
 
+#include <vector>
+#include <string>
+
 namespace common {
 
 	/**
@@ -41,7 +44,31 @@ namespace common {
          */
         void operator=(Application const&);
 
+        std::vector<std::string> args;
+
 		public:
+
+		/**
+		 * @brief Adiciona ou altera o valor de um argumento.
+		 * 
+		 * @param unsigned int Índice para o argumento.
+		 * @param arg Valor do argumento.
+		 */
+		static void setArg(unsigned int index, std::string arg);
+
+		/**
+		 * @brief Recupera o valor de um argumento.
+		 * 
+		 * @param unsigned int Índice para o argumento.
+		 * @return Valor do argumento.
+		 */
+		static std::string getArg(unsigned int index);
+
+		/**
+		 * @brief Counta quanto argumentos forma passado na inicialização do programa.
+		 * @return Total de argumentos.
+		 */
+		static unsigned int countArgs();
 
 		/**
          * @brief Recupera a instância de Application.
