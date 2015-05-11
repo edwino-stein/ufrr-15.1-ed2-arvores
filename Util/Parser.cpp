@@ -16,33 +16,34 @@
 const String Parser::basicFormat = "([a-zA-Z])+((\\s)?(\\+|-)?(\\d)+)+";
 
 //Formato genérico de uma instrução
-const String Parser::generalFormat = "(i|b|r|p)(\\s)?(\\+|-)?(\\d)+";
+const String Parser::generalFormat = "(i|b|r|I|B|R)(\\s)?(\\+|-)?(\\d)+";
 
 //Formato espeficio de uma instrução de percurso
-const String Parser::percurseFormat = "p(\\s)?(0|1|2)";
+const String Parser::percurseFormat = "(p|P)(\\s)?([0-2]|10)$";
+// const String Parser::percurseFormat = "p(\\s)?(0|1|2)";
 
 //Formato espeficio de uma instrução de tipo
-const String Parser::typeFormat = "t(\\s)?(0|1|2)(\\s)([1-9]\\d*)+";
+const String Parser::typeFormat = "(t|T)(\\s)?(0|1|2)((\\s)([1-9]\\d*)+)?";
 
 //Lista de todas as intruções suportatas
-const String Parser::typesFormat = "(t|i|b|r|p)";
+const String Parser::typesFormat = "(t|i|b|r|p|T|I|B|R|P)";
 
 //Forma para números inteiros
 const String Parser::intFormat = "(\\+|-)?(\\d)+";
 
 /* ******************* CONSTRUTORES E DESTRUTORES ******************* */
 
-Parser::Parser(String fileName) : fileName(fileName){
+Parser::Parser(String filename) : filename(filename){
 	//Verifica se o arquivo existe
-	this->fileGood = Parser::fileExists(this->fileName);
+	this->fileGood = Parser::fileExists(this->filename);
 }
 
 /* ******************* ARQUIVO ******************* */
 
 /* Verifica se o arquivo existe */
-bool Parser::fileExists(String fileName){
+bool Parser::fileExists(String filename){
 	struct stat buffer;   
-	return (stat(fileName.c_str(), &buffer) == 0); 
+	return (stat(filename.c_str(), &buffer) == 0); 
 }
 
 /* Abre o arquivo */
@@ -50,16 +51,16 @@ bool Parser::openFile(){
 
 	//Verifica se o arquivo está bom para trabalhar
 	if(!this->fileGood){
-		out->put("O arquivo não existe ou é inválido!", true);
+		out->put(" * Erro: O arquivo não existe ou é inválido!", true);
 		return false;
 	}
 
 	//Abre o arquivo
-	this->handleFile.open(this->fileName);
+	this->handleFile.open(this->filename);
 
 	//Verifica se o arquivo realmente abriu
 	if(!handleFile.is_open()){
-		out->put("O arquivo não existe ou é inválido!");
+		out->put(" * Erro: O arquivo não existe ou é inválido!");
 		return false;
 	}
 
@@ -172,7 +173,7 @@ bool Parser::load(){
 
 		//Se tiver vazia, ignora
 		if(line.empty()){
-			out->printf("Alerta: Linha %d está vazia, ignorando...\n", countLines);
+			out->printf(" * Alerta: Linha %d está vazia, ignorando...\n", countLines);
 			return;
 		}
 
@@ -187,8 +188,8 @@ bool Parser::load(){
 
 			//Se for uma instrução válida, guarda na fila, se não, gera um erro
 			if(!me->isInstruction(matched[0])){
-				out ->printf("Erro: O comando na linha %d não foi reconhecido:\n", countLines)
-					->put("\t\"")->put(matched[0])->put("\"", true);
+				out ->printf(" * Erro: O comando na linha %d não foi reconhecido: \"", countLines)
+					->put(matched[0])->put("\"", true);
 				error = true;
 			}else{
 				me->addInstruction(matched[0]);
@@ -200,7 +201,7 @@ bool Parser::load(){
 
 		//Se não achou nada parecido com uma instrução
 		if(!found){
-			out->printf("Erro: Nenhum comando foi reconhecido na linha %d:\n\t\"%s\"\n", countLines, line.c_str());
+			out->printf(" * Erro: Nenhum comando foi reconhecido na linha %d:\"%s\"\n", countLines, line.c_str());
 			error = true;
 		}
 	});
@@ -208,4 +209,9 @@ bool Parser::load(){
 	this->closeFile();
 
 	return !error;
+}
+
+
+String Parser::getFilename(){
+	return this->filename;
 }

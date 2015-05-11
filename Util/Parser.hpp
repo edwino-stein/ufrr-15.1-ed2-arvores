@@ -20,13 +20,13 @@ protected:
 	static const String typesFormat;
 	static const String intFormat;
 
-	String fileName;
+	String filename;
 	String lastError;
 	std::ifstream handleFile;
 	bool fileGood;
 	std::queue<String> instructionsQueue;
 
-	static bool fileExists(String fileName);
+	static bool fileExists(String filename);
 	bool openFile();
 	void closeFile();
 	void eachFileLines(std::function<void (String, unsigned int)> handle);
@@ -43,10 +43,12 @@ public:
 		String original;
 	};
 
-	Parser(String fileName);
+	Parser(String filename);
 	bool load();
 	bool getNextInstruction(Instruction& next);
 	unsigned int countInstructions();
+
+	String getFilename();
 };
 
 #endif
