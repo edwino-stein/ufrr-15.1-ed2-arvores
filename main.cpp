@@ -1,3 +1,10 @@
+/*
+	Edwino Stein - 1201324411
+*/
+/* ************************************************************* */
+/* ********************* Programa Principal ******************** */
+/* ************************************************************* */
+
 #include "Common/Common.hpp"
 #include "Util/Parser.hpp"
 #include "Tree/Tree.hpp"
@@ -20,9 +27,9 @@ int Application::main(){
 		out->put("Carregando arquivo \"")->put(p->getFilename())->put("\"...", true);
 		if(!p->load()){
 
-			out ->put(" * Houve erros enquanto carregava o arquivo \"")
+			out ->put(" *** Houve erros enquanto carregava o arquivo \"")
 				->put(p->getFilename())
-				->put("\"\n", true);
+				->put("\" ***\n", true);
 
 			error = true;
 		}
@@ -115,9 +122,9 @@ int Application::main(){
 
 					//Termina o programa caso não tenha sido especificado o tipo
 					out->putNewLine()->put("**** Erro: Tipo de árvore inválido! ****", true);
-					for(int i = 0; i < files.size(); i++){
-						delete files[i];
-						files[i] = NULL;
+					for(int j = 0; j < files.size(); j++){
+						delete files[j];
+						files[j] = NULL;
 					}
 					return 1;
 				break;
@@ -139,9 +146,9 @@ int Application::main(){
 
 						//Imprime lista de valores que foram consultados
 						out->put("A busca percorreu todos os seguintes valores: ", true);
-						for(int i = 0; i < historico.size(); i++){
-							out->put(historico[i]);
-							if(i < historico.size() - 1)
+						for(int j = 0; j < historico.size(); j++){
+							out->put(historico[j]);
+							if(j < historico.size() - 1)
 								out->put(", ");
 						}
 						out->putNewLine();
@@ -209,20 +216,20 @@ int Application::main(){
 
 					//Termina o programa caso não tenha sido especificado o tipo de percurso
 					out->putNewLine()->put("**** Erro: Tipo de percurso inválido! ****", true);
-					for(int i = 0; i < files.size(); i++){
-						delete files[i];
-						files[i] = NULL;
+					for(int j = 0; j < files.size(); j++){
+						delete files[j];
+						files[j] = NULL;
 					}
 					return 1;
 
 				break;
 
-				//Termina o programa caso não o comando seja inválido
+				//Termina o programa caso o comando seja inválido
 				default:
 					out->putNewLine()->put("**** Erro: Comando inválido! ****", true);
-					for(int i = 0; i < files.size(); i++){
-						delete files[i];
-						files[i] = NULL;
+					for(int j = 0; j < files.size(); j++){
+						delete files[j];
+						files[j] = NULL;
 					}
 					return 1;
 			}
@@ -250,9 +257,9 @@ int Application::main(){
 	}
 
 	//Libera memória dos parseadores
-	for(int i = 0; i < files.size(); i++){
-		delete files[i];
-		files[i] = NULL;
+	for(int j = 0; j < files.size(); j++){
+		delete files[j];
+		files[j] = NULL;
 	}
 
 	return 0;
