@@ -20,7 +20,7 @@ int Application::main(){
 		out->put("Carregando arquivo \"")->put(p->getFilename())->put("\"...", true);
 		if(!p->load()){
 
-			out ->put(" * Houveram erros enquanto carregava o arquivo \"")
+			out ->put(" * Houve erros enquanto carregava o arquivo \"")
 				->put(p->getFilename())
 				->put("\"\n", true);
 
@@ -41,7 +41,7 @@ int Application::main(){
 	}
 
 	//Espera confirmação do usuário
-	out->put("Tudo carregado, ");
+	out->put(" * Todos os arquivo foram carregados, ");
 	console->pause();
 
 	tree::Tree *arvore = NULL;
@@ -57,7 +57,7 @@ int Application::main(){
 		//Busca a próxima instrução e executa
 		while(files[i]->getNextInstruction(instruction)){
 
-			out->putNewLine()->put("Comando > ")->put(instruction.original, true);
+			out->putNewLine()->put("Comando: ")->put(instruction.original, true);
 
 			//Se não existe uma árvore instanciada, ignora o comando
 			if(arvore == NULL && instruction.type != 'T' && instruction.type != 't'){
@@ -82,7 +82,7 @@ int Application::main(){
 					}
 
 					else{
-						out->put("Criando árvore ");
+						out->put("Criando uma árvore ");
 					}
 
 					//Binária
@@ -94,7 +94,7 @@ int Application::main(){
 
 					//AVL
 					if(instruction.param == 1){
-						out->put("Binária de busca autobalanceavel (AVL)...", true);
+						out->put("Binária de Busca Auto Balanceável (AVL)...", true);
 						arvore = new tree::AvlTree();
 						continue;
 					}
@@ -114,7 +114,7 @@ int Application::main(){
 					}
 
 					//Termina o programa caso não tenha sido especificado o tipo
-					out->putNewLine()->put("**** Erro: Tipo de árvore inválida! ****", true);
+					out->putNewLine()->put("**** Erro: Tipo de árvore inválido! ****", true);
 					for(int i = 0; i < files.size(); i++){
 						delete files[i];
 						files[i] = NULL;
@@ -245,7 +245,7 @@ int Application::main(){
 		}
 
 		//Espera confirmação do usuário
-		out->put("\n * Execução de \"")->put(files[i]->getFilename())->put("\" chegou ao fim. ", true);
+		out->put("\n * Execução do arquivo chegou ao fim. ");
 		console->pause();
 	}
 
