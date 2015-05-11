@@ -328,7 +328,12 @@ void BinaryTree::printNodeValue(){
 	out ->put("(")->put(this->getValue())->put(')', true);
 }
 
-/* Imprimi a arvore */
+/* Imprimi a arvore publica */
+void BinaryTree::print(){
+	this->print(0);
+}
+
+/* Imprimi a arvore protegida */
 void BinaryTree::print(int spaces){
 
 	if(this->isEmpty())

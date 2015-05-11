@@ -11,7 +11,7 @@ namespace tree{
 	 * @ver Bin Mark IV
 	 */
 
-	class BinaryTree : Tree{
+	class BinaryTree : public Tree{
 
 	protected:
 
@@ -30,6 +30,8 @@ namespace tree{
 		bool remove(int value, BinaryTree *parent);
 
 		virtual void printNodeValue();
+
+		void print(int spaces);
 
 	public:
 
@@ -65,7 +67,7 @@ namespace tree{
 
 		int height();
 
-		void print(int spaces = 0);
+		void print();
 
 	};
 }

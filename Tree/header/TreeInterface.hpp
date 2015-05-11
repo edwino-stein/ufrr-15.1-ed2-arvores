@@ -42,6 +42,8 @@ namespace tree {
 
 		virtual void each(std::function<void(int)> handle, char order) =0;
 
+		virtual void print()=0;
+
 		virtual int height()=0;
 
 		virtual bool isEmpty()=0;
