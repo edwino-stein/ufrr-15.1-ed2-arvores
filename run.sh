@@ -1,4 +1,4 @@
-#!/bin/sh
+ #!/bin/sh
 
 #
 #  Edwino Stien - 1201324411
@@ -7,7 +7,7 @@
 # ************** Variaveis globais **************
 
 dirBuild="./build/";
-compileTool="./tools/compileLinux.sh";
+compileTool="./tools/compileOSX.sh";
 compileLibTool="./tools/compileTreeLib.sh";
 libName="Tree.a";
 mainProgramName="main";
@@ -26,9 +26,9 @@ fi
 # Verifica se a biblioteca já foi compilada
 if [ ! -f "$dirBuild$libName" ] ; then
 	echo
-	echo "\t   ######################################################"
-	echo "\t   ########## Compilando biblioteca de Árvores ##########"
-	echo "\t   ######################################################"
+	echo -e "\t   ######################################################"
+	echo -e "\t   ########## Compilando biblioteca de Árvores ##########"
+	echo -e "\t   ######################################################"
 	echo
 	chmod +x "$compileLibTool";
 	bash -c "$compileLibTool";
@@ -45,9 +45,9 @@ fi
 #Verifica se o aplicativo já foi compilado
 if [ ! -f "$dirBuild$mainProgramName" ] ; then
 	echo
-	echo "\t   ######################################################"
-	echo "\t   ################ Compilando Aplicativo ###############"
-	echo "\t   ######################################################"
+	echo -e "\t   ######################################################"
+	echo -e "\t   ################ Compilando Aplicativo ###############"
+	echo -e "\t   ######################################################"
 	echo
 	chmod +x "$compileTool";
 	bash -c "$compileTool $compileInvokation";
@@ -61,9 +61,9 @@ if [ ! -f "$dirBuild$mainProgramName" ] ; then
 fi
 
 echo
-echo "\t   ######################################################"
-echo "\t   ################ Executando Aplicativo ###############"
-echo "\t   ######################################################"
+echo -e "\t   ######################################################"
+echo -e "\t   ################ Executando Aplicativo ###############"
+echo -e "\t   ######################################################"
 echo
 
 #Pega os parâmetros
