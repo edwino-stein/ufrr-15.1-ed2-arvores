@@ -230,3 +230,5 @@ if [ $autoExec -eq 1 ] ; then
 	sleep 1s;
 	bash -c "./build/$main";
 fi
+
+exit 0;

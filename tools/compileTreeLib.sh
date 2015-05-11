@@ -1,4 +1,8 @@
- #!/bin/sh
+#!/bin/sh
+
+#
+#  Edwino Stien - 1201324411
+#
 
 # ************** Variaveis globais **************
 fileLog="compile.log";
@@ -165,3 +169,4 @@ echo " OK!";
 echo -n "Limpando bagunça...";
 bash -c "rm $dependencies > /dev/null";
 echo " OK!";
+exit 0;
