@@ -365,6 +365,8 @@ void BinaryTree::print(int spaces){
 
 /* ******************* TREE ******************* */
 
+Tree::~Tree(){}
+
 void Tree::printSpaces(int spaces){
 	for(int i = 1; i <= spaces; i++)
 		out->put((i == spaces) ? " - " : "  ");
