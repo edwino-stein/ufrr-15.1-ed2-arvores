@@ -342,19 +342,25 @@ void BinaryTree::print(int spaces){
 	//Imprime o valor do nó
 	this->printNodeValue();
 
+	if(this->isLeaf())
+		return;
+
 	//Se tiver esquerda, impreme a arvore da esquerda
-	if(!this->getLeft()->isEmpty()){
-		Tree::printSpaces(spaces + 1);
-		out->put('L');
+	Tree::printSpaces(spaces + 1);
+	out->put('L');
+	if(!this->getLeft()->isEmpty())
 		this->getLeft()->print(spaces + 1);
-	}
+	else
+		out->put("( )", true);
 
 	//Se tiver direita, impreme a arvore da direita
-	if(!this->getRight()->isEmpty()){
-		Tree::printSpaces(spaces + 1);
-		out->put('R');
+	Tree::printSpaces(spaces + 1);
+	out->put('R');
+	if(!this->getRight()->isEmpty())
 		this->getRight()->print(spaces + 1);
-	}
+	else
+		out->put("( )", true);
+
 }
 
 /* ******************* TREE ******************* */
